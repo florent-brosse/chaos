@@ -13,7 +13,7 @@ func TestModel(t *testing.T) {
 	t2 := time.Date(2017, time.February, 16, 0, 0, 0, 0, time.UTC)
 	task := Task{"10", USE_CPU, t2, duration_Milliseconds, []string{"toto", "DC1"}, make(map[string]string), false, false, 1}
 	res2B, _ := json.Marshal(task)
-	fmt.Println(string(res2B))
+	//fmt.Println(string(res2B))
 	expected := "{\"id\":\"10\",\"type\":4,\"start\":\"2017-02-16T00:00:00Z\",\"duration\":500000000,\"tags\":[\"toto\",\"DC1\"],\"param\":{},\"launched\":false,\"done\":false}"
 	if strings.Compare(string(res2B), expected) != 0 {
 		t.Errorf("model were not equals got: %v, want: %v.", string(res2B), expected)
@@ -37,13 +37,18 @@ func TestModel3(t *testing.T) {
 
 	scenario := Scenario{"add cpu", "add cpu", []Task{task}, "1", false}
 	modifyScenario(&scenario)
-	fmt.Println(scenario.Tasks[0].Done)
+	fmt.Println(scenario.Tasks)
+	fmt.Println(scenario)
 }
 
 func modifyTask(task *Task) {
-	task.Done = true
+
 }
 
 func modifyScenario(scenario *Scenario) {
-	modifyTask(&scenario.Tasks[0])
+	scenario.Done = true
+	for i := 0; i < len(scenario.Tasks); i++ {
+		task := &scenario.Tasks[i]
+		task.Done = true
+	}
 }

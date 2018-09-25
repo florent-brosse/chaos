@@ -89,7 +89,7 @@ func main() {
 		default:
 			fmt.Printf("Port: %v\n", conf.Port)
 			fmt.Printf("listen_address: %v\n", conf.Listen_address)
-			go doScenarios()
+			go doScenarios(&scenarios)
 			startServer()
 		}
 
@@ -102,10 +102,10 @@ chaos --file --fileusage 1% --filepath /tmp/BIGFILE`
 	}
 
 }
-func doScenarios() {
+func doScenarios(scenarios *[]Scenario) {
 	for {
-		for _, scenario := range scenarios {
-
+		for i := 0; i < len(*scenarios); i++ {
+			scenario := &((*scenarios)[i])
 			if !scenario.Done {
 				doScenario(scenario)
 			}
@@ -113,21 +113,27 @@ func doScenarios() {
 		time.Sleep(100 * time.Millisecond)
 	}
 }
-func doScenario(scenario Scenario) {
+func doScenario(scenario *Scenario) {
 	allDone := true
-	for _, task := range scenario.Tasks {
-		if !task.Done && !task.Launched && task.Start.Before(time.Now()) {
+	timeNow := time.Now()
+	for i := 0; i < len(scenario.Tasks); i++ {
+		task := &scenario.Tasks[i]
+		if !task.Done && !task.Launched && task.Start.Before(timeNow) && (task.Start.Add(task.Duration)).After(timeNow) {
 			go launchTask(task)
 		}
-		if !task.Done && task.Launched && task.Start.Add(task.Duration).After(time.Now()) {
+		if !task.Done && task.Launched && (task.Start.Add(task.Duration)).Before(timeNow) {
 			go stopTask(task)
+		}
+		if !task.Done && !task.Launched && (task.Start.Add(task.Duration)).Before(timeNow) {
+			task.Launched = false
+			task.Done = true
 		}
 		allDone = allDone && task.Done
 	}
 	scenario.Done = allDone
 }
 
-func launchTask(task Task) {
+func launchTask(task *Task) {
 	task.Launched = true
 	var command string
 	switch task.Type {
@@ -152,7 +158,8 @@ func launchTask(task Task) {
 	}
 	task.pid = launchCommand(command)
 }
-func stopTask(task Task) {
+func stopTask(task *Task) {
+	task.Done = true
 	var command string
 	switch task.Type {
 	case CREATE_FILE:
@@ -162,7 +169,7 @@ func stopTask(task Task) {
 	case CHANGE_TIME:
 		command = ""
 	default:
-		command = "kill " + strconv.Itoa(task.pid)
+		command = "kill -TERM -" + strconv.Itoa(task.pid)
 	}
 	if command != "" {
 		launchCommand(command)

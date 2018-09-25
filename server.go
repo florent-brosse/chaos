@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -44,8 +43,9 @@ func CreateScenario(w http.ResponseWriter, r *http.Request) {
 	var scenario Scenario
 	_ = json.NewDecoder(r.Body).Decode(&scenario)
 	scenario.Id = id
-	for _, task := range scenario.Tasks {
-		initDone(&task)
+	for i := 0; i < len(scenario.Tasks); i++ {
+		task := &scenario.Tasks[i]
+		initDone(task)
 	}
 	scenarios = append(scenarios, scenario)
 	json.NewEncoder(w).Encode(scenario)
@@ -61,7 +61,6 @@ func initDone(task *Task) {
 			return
 		}
 	}
-	fmt.Println(task)
 }
 
 func contains(s []string, e string) bool {
