@@ -19,8 +19,6 @@ func startServer() {
 	//r.HandleFunc("/", HomeHandler)
 	http.Handle("/", r)
 	listen := conf.Listen_address + ":" + strconv.Itoa(conf.Port)
-	fmt.Printf("Cpu: %v\n", listen)
-
 	log.Fatal(http.ListenAndServe(listen, r))
 }
 
@@ -47,13 +45,13 @@ func CreateScenario(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&scenario)
 	scenario.Id = id
 	for _, task := range scenario.Tasks {
-		initDone(task)
+		initDone(&task)
 	}
 	scenarios = append(scenarios, scenario)
 	json.NewEncoder(w).Encode(scenario)
 }
 
-func initDone(task Task) {
+func initDone(task *Task) {
 	task.Done = true
 	task.Launched = true
 	for _, tag := range task.Tags {
@@ -63,6 +61,7 @@ func initDone(task Task) {
 			return
 		}
 	}
+	fmt.Println(task)
 }
 
 func contains(s []string, e string) bool {

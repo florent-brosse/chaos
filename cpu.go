@@ -3,6 +3,7 @@ package main
 import (
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -10,6 +11,7 @@ import (
 func cpu(percentString string) {
 	var wg sync.WaitGroup
 	numCPU := runtime.NumCPU()
+	percentString = strings.TrimSuffix(percentString, "%")
 	percent, _ := strconv.ParseFloat(percentString, 64)
 	wg.Add(numCPU)
 	for i := 0; i < numCPU; i++ {

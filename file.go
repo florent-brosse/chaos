@@ -10,6 +10,10 @@ import (
 
 func makeFile(path string, usageString string) {
 	var size int64
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if strings.HasSuffix(usageString, "%") {
 		usageString = strings.TrimSuffix(usageString, "%")
 		percent, _ := strconv.ParseInt(usageString, 10, 64)
@@ -21,10 +25,6 @@ func makeFile(path string, usageString string) {
 		size = int64(byteAvaillable) * percent / 100
 	} else {
 		size, _ = strconv.ParseInt(usageString, 10, 64)
-	}
-	f, err := os.Create(path)
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	if err := f.Truncate(size); err != nil {

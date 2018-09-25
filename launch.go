@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -73,27 +74,38 @@ func init() {
 }
 
 func main() {
-	fmt.Printf("Cpu: %v\n", conf.Cpu)
-	fmt.Printf("Port: %v\n", conf.Port)
-	fmt.Printf("listen_address: %v\n", conf.Listen_address)
 
-	switch {
-	case conf.Cpu:
-		cpu(conf.Cpuusage)
-	case conf.Ram:
-		ram(conf.Ramusage)
-	case conf.Io:
-		io(conf.Iousage)
-	case conf.File:
-		makeFile(conf.Filepath, conf.Fileusage)
-	default:
-		go doScenarios()
-		startServer()
+	if (conf.Cpu != conf.File != conf.Io != conf.Ram) || (!conf.Cpu && !conf.File && !conf.Io && !conf.Ram) {
+
+		switch {
+		case conf.Cpu:
+			cpu(conf.Cpuusage)
+		case conf.Ram:
+			ram(conf.Ramusage)
+		case conf.Io:
+			io(conf.Iousage)
+		case conf.File:
+			makeFile(conf.Filepath, conf.Fileusage)
+		default:
+			fmt.Printf("Port: %v\n", conf.Port)
+			fmt.Printf("listen_address: %v\n", conf.Listen_address)
+			go doScenarios()
+			startServer()
+		}
+
+	} else {
+		var message string = `Error please use
+chaos --ram --ramusage 80%
+chaos --cpu --cpuusage 80%
+chaos --file --fileusage 1% --filepath /tmp/BIGFILE`
+		log.Fatal(message)
 	}
+
 }
 func doScenarios() {
 	for {
 		for _, scenario := range scenarios {
+
 			if !scenario.Done {
 				doScenario(scenario)
 			}
@@ -104,7 +116,7 @@ func doScenarios() {
 func doScenario(scenario Scenario) {
 	allDone := true
 	for _, task := range scenario.Tasks {
-		if !task.Done && !task.Launched && task.Start.After(time.Now()) {
+		if !task.Done && !task.Launched && task.Start.Before(time.Now()) {
 			go launchTask(task)
 		}
 		if !task.Done && task.Launched && task.Start.Add(task.Duration).After(time.Now()) {

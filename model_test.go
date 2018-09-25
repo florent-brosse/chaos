@@ -18,5 +18,32 @@ func TestModel(t *testing.T) {
 	if strings.Compare(string(res2B), expected) != 0 {
 		t.Errorf("model were not equals got: %v, want: %v.", string(res2B), expected)
 	}
+}
 
+func TestModel2(t *testing.T) {
+	duration_Milliseconds := 60 * time.Second
+	t2 := time.Now()
+	task := Task{"10", USE_CPU, t2, duration_Milliseconds, []string{"toto", "DC1"}, make(map[string]string), false, false, 1}
+
+	scenario := Scenario{"add cpu", "add cpu", []Task{task}, "1", false}
+	res2B, _ := json.Marshal(scenario)
+	fmt.Println(string(res2B))
+}
+
+func TestModel3(t *testing.T) {
+	duration_Milliseconds := 60 * time.Second
+	t2 := time.Now()
+	task := Task{"10", USE_CPU, t2, duration_Milliseconds, []string{"toto", "DC1"}, make(map[string]string), false, false, 1}
+
+	scenario := Scenario{"add cpu", "add cpu", []Task{task}, "1", false}
+	modifyScenario(&scenario)
+	fmt.Println(scenario.Tasks[0].Done)
+}
+
+func modifyTask(task *Task) {
+	task.Done = true
+}
+
+func modifyScenario(scenario *Scenario) {
+	modifyTask(&scenario.Tasks[0])
 }

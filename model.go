@@ -24,7 +24,7 @@ type Task struct {
 	pid      int
 }
 
-func FinishTime(scenario Scenario) time.Time {
+func FinishTime(scenario *Scenario) time.Time {
 	longestTime := time.Time{}
 	for _, v := range scenario.Tasks {
 		currentFinishTaskTime := v.Start.Add(v.Duration)

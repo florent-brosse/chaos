@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var s []byte
+var overall [][]int
 
 func ram(usageString string) {
 	fmt.Println(usageString)
@@ -22,17 +22,22 @@ func ram(usageString string) {
 		if err != nil {
 			panic("Commander, we have a problem. syscall.Sysinfo:" + err.Error())
 		}
-		fmt.Println(si.Freeram)
-		fmt.Println(si.Totalram)
-		fmt.Println(si.Bufferram)
-		fmt.Println(si.Sharedram)
-		size = (si.Freeram + si.Bufferram + si.Sharedram) * percent / 100
+		//fmt.Println(si.Freeram)
+		//fmt.Println(si.Bufferram)
+		size = (si.Freeram + si.Bufferram) * percent / 100
 	} else {
 		size, _ = strconv.ParseUint(usageString, 10, 64)
 	}
 	fmt.Println(size)
-	s = make([]byte, size, size) // do not work well...
-
+	var sum uint64 = 0
+	for sum < size {
+		sum += 1000000
+		a := make([]int, 1000000)
+		for i := 0; i < len(a); i += 4096 {
+			a[i] = 'x'
+		}
+		overall = append(overall, a)
+	}
 	time.Sleep(time.Hour * 100000)
-	fmt.Println(s)
+	fmt.Println(len(overall))
 }

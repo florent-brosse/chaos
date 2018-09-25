@@ -1,3 +1,2 @@
-cpu: false
 port: 7070
 tags: ["test","DC1"]

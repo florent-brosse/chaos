@@ -11,7 +11,7 @@ func launchCommand(command string) int {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Waiting for command to finish...")
-	err = cmd.Wait()
+	//log.Printf("Waiting for command to finish...")
+	//err = cmd.Wait()
 	return cmd.Process.Pid
 }
