@@ -28,20 +28,19 @@ export PATH=$PATH:$GOPATH/bin
 
 Chaos is tested against multiple versions of Go on Linux
 
+It can launch some actions
 ```
 chaos --ram --ramusage 80%
-```
-```
+chaos --ram --ramusage 5000000000
 chaos --cpu --cpuusage 80%
-```
-```
 chaos --file --fileusage 1% --filepath /tmp/BIGFILE
-
+chaos --file --fileusage 10000000 --filepath /tmp/BIGFILE 
+```
+```
 or run the server
-chaos
-```
+./chaos
 
-```
+and post a scenarios
 curl -X POST \
   http://localhost:7070/scenarios/1 \
   -H 'Cache-Control: no-cache' \
