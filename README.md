@@ -32,7 +32,8 @@ It can launch some actions
 ```
 Create a process which use ram
 chaos --ram --ramusage 80%
-chaos --ram --ramusage 5000000000
+Use 5GB or ram
+chaos --ram --ramusage 5000
 ```
 ```
 Create a process which use 80% of every core
@@ -42,7 +43,8 @@ chaos --cpu --cpuusage 80%
 ```
 Create a big file in the /tmp filesystem
 chaos --file --fileusage 1% --filepath /tmp/BIGFILE
-chaos --file --fileusage 10000000 --filepath /tmp/BIGFILE
+Create a 10MB file
+chaos --file --fileusage 10 --filepath /tmp/BIGFILE
 ```
 ```
 Create 10MB/s io usage in the /tmp filesystem

@@ -25,6 +25,7 @@ func makeFile(path string, usageString string) {
 		size = int64(byteAvaillable) * percent / 100
 	} else {
 		size, _ = strconv.ParseInt(usageString, 10, 64)
+		size *= 1000000 //change from MB to B
 	}
 
 	if err := f.Truncate(size); err != nil {

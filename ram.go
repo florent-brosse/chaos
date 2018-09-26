@@ -27,6 +27,7 @@ func ram(usageString string) {
 		size = (si.Freeram + si.Bufferram) * percent / 100
 	} else {
 		size, _ = strconv.ParseUint(usageString, 10, 64)
+		size *= 1000000 //change from MB to B
 	}
 	fmt.Println(size)
 	var sum uint64 = 0
