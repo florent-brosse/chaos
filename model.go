@@ -18,7 +18,7 @@ type Task struct {
 	Id       string            `json:"id"`
 	Type     TaskType          `json:"type"`
 	Start    time.Time         `json:"start"`
-	Duration time.Duration     `json:"duration"`
+	Duration int               `json:"duration"`
 	Tags     []string          `json:"tags"`
 	Param    map[string]string `json:"param"`
 	Launched bool              `json:"launched"`
@@ -28,8 +28,8 @@ type Task struct {
 
 func FinishTime(scenario *Scenario) time.Time {
 	longestTime := time.Time{}
-	for _, v := range scenario.Tasks {
-		currentFinishTaskTime := v.Start.Add(v.Duration)
+	for _, task := range scenario.Tasks {
+		currentFinishTaskTime := task.Start.Add(time.Second * time.Duration(task.Duration))
 		if currentFinishTaskTime.After(longestTime) {
 			longestTime = currentFinishTaskTime
 		}

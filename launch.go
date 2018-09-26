@@ -120,13 +120,15 @@ func doScenario(scenario *Scenario) {
 	timeNow := time.Now()
 	for i := 0; i < len(scenario.Tasks); i++ {
 		task := &scenario.Tasks[i]
-		if !task.Done && !task.Launched && task.Start.Before(timeNow) && (task.Start.Add(task.Duration)).After(timeNow) {
+		durationSec := time.Second * time.Duration(task.Duration)
+		endDate := task.Start.Add(durationSec)
+		if !task.Done && !task.Launched && task.Start.Before(timeNow) && (endDate).After(timeNow) {
 			go launchTask(task)
 		}
-		if !task.Done && task.Launched && (task.Start.Add(task.Duration)).Before(timeNow) {
+		if !task.Done && task.Launched && (endDate).Before(timeNow) {
 			go stopTask(task)
 		}
-		if !task.Done && !task.Launched && (task.Start.Add(task.Duration)).Before(timeNow) {
+		if !task.Done && !task.Launched && (endDate).Before(timeNow) {
 			task.Launched = false
 			task.Done = true
 		}
@@ -179,7 +181,7 @@ func stopTask(task *Task) {
 	case BLOCK_RANGE_INPUT_PORT:
 		command = "/sbin/iptables -D INPUT -p tcp --destination-port " + task.Param["rangeport"] + " -j DROP"
 	default:
-		command = "kill -TERM -" + strconv.Itoa(task.pid)
+		command = "pkill -9 -P " + strconv.Itoa(task.pid)
 	}
 	if command != "" {
 		launchCommand(command)
