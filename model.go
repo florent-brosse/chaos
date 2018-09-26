@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"time"
 )
 
@@ -48,3 +50,50 @@ const (
 	ADD_LATENCY
 	CHANGE_TIME
 )
+
+func (t TaskType) String() string {
+	return taskTypesId[t]
+}
+
+var taskTypesId = map[TaskType]string{
+	KILL_PROCESS:  "KILL_PROCESS",
+	START_PROCESS: "START_PROCESS",
+	CREATE_FILE:   "CREATE_FILE",
+	USE_RAM:       "USE_RAM",
+	USE_CPU:       "USE_CPU",
+	USE_IO:        "USE_IO",
+	SHUTDOWN:      "SHUTDOWN",
+	ADD_LATENCY:   "ADD_LATENCY",
+	CHANGE_TIME:   "CHANGE_TIME",
+}
+
+var taskTypesName = map[string]TaskType{
+	"KILL_PROCESS":  KILL_PROCESS,
+	"START_PROCESS": START_PROCESS,
+	"CREATE_FILE":   CREATE_FILE,
+	"USE_RAM":       USE_RAM,
+	"USE_CPU":       USE_CPU,
+	"USE_IO":        USE_IO,
+	"SHUTDOWN":      SHUTDOWN,
+	"ADD_LATENCY":   ADD_LATENCY,
+	"CHANGE_TIME":   CHANGE_TIME,
+}
+
+func (d *TaskType) MarshalJSON() ([]byte, error) {
+	buffer := bytes.NewBufferString(`"`)
+	buffer.WriteString(taskTypesId[*d])
+	buffer.WriteString(`"`)
+	return buffer.Bytes(), nil
+}
+
+func (d *TaskType) UnmarshalJSON(b []byte) error {
+	// unmarshal as string
+	var s string
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	// lookup value
+	*d = taskTypesName[s]
+	return nil
+}

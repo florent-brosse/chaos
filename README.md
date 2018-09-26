@@ -45,5 +45,5 @@ curl -X POST \
   http://localhost:7070/scenarios/1 \
   -H 'Cache-Control: no-cache' \
   -H 'Content-Type: application/json' \
-  -d '{"name":"add cpu","description":"add cpu","tasks":[{"id":"10","type":4,"start":"2018-09-25T17:15:00.757540298+02:00","duration":60000000000,"tags":["toto","DC1"],"param":{"usage":"30%"},"launched":false,"done":false}],"id":"1","done":false}'
+  -d '{"name":"add cpu","description":"add cpu","tasks":[{"id":"10","type":"USE_CPU","start":"2018-09-25T17:15:00.757540298+02:00","duration":60000000000,"tags":["toto","DC1"],"param":{"usage":"30%"},"launched":false,"done":false}],"id":"1","done":false}'
 ```
