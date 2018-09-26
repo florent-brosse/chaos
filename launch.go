@@ -137,10 +137,10 @@ func launchTask(task *Task) {
 	task.Launched = true
 	var command string
 	switch task.Type {
-	case KILL_PROCESS:
-		command = "service " + task.Param["path"] + " stop"
-	case START_PROCESS:
-		command = "service " + task.Param["path"] + " start"
+	case STOP_SERVICE:
+		command = "service " + task.Param["servicename"] + " stop"
+	case START_SERVICE:
+		command = "service " + task.Param["servicename"] + " start"
 	case CREATE_FILE:
 		command = "./chaos --file --filepath " + task.Param["path"] + " --fileusage " + task.Param["usage"]
 	case USE_RAM:
@@ -149,12 +149,18 @@ func launchTask(task *Task) {
 		command = "./chaos --cpu --cpuusage " + task.Param["usage"]
 	case USE_IO:
 		command = "./chaos --io --iousage " + task.Param["usage"]
-	case SHUTDOWN:
+	case KILL_PROCESS:
 		command = "killall " + task.Param["processname"]
+	case SHUTDOWN:
+		command = "shutdown now"
+	case RUN_COMMAND:
+		command = task.Param["command"]
 	case ADD_LATENCY:
-		command = ""
+		command = "tc qdisc add dev " + task.Param["interface"] + " root netem delay " + task.Param["delay"] + "ms"
 	case CHANGE_TIME:
-		command = ""
+		command = "" //not yet how to do it a lot of code use time.Now()
+	case BLOCK_RANGE_INPUT_PORT:
+		command = "/sbin/iptables -A INPUT -p tcp --destination-port " + task.Param["rangeport"] + " -j DROP -m comment --comment \"TASK_ID='" + task.Id + "'\""
 	}
 	task.pid = launchCommand(command)
 }
@@ -165,9 +171,11 @@ func stopTask(task *Task) {
 	case CREATE_FILE:
 		command = "rm -rf " + task.Param["path"]
 	case ADD_LATENCY:
-		command = ""
+		command = "tc qdisc del dev " + task.Param["interface"] + " root netem"
 	case CHANGE_TIME:
 		command = ""
+	case BLOCK_RANGE_INPUT_PORT:
+		command = "/sbin/iptables -D INPUT -p tcp --destination-port " + task.Param["rangeport"] + " -j DROP"
 	default:
 		command = "kill -TERM -" + strconv.Itoa(task.pid)
 	}

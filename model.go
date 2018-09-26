@@ -41,7 +41,8 @@ type TaskType int
 
 const (
 	KILL_PROCESS TaskType = iota
-	START_PROCESS
+	START_SERVICE
+	STOP_SERVICE
 	CREATE_FILE
 	USE_RAM
 	USE_CPU
@@ -49,6 +50,8 @@ const (
 	SHUTDOWN
 	ADD_LATENCY
 	CHANGE_TIME
+	RUN_COMMAND
+	BLOCK_RANGE_INPUT_PORT
 )
 
 func (t TaskType) String() string {
@@ -57,7 +60,8 @@ func (t TaskType) String() string {
 
 var taskTypesId = map[TaskType]string{
 	KILL_PROCESS:  "KILL_PROCESS",
-	START_PROCESS: "START_PROCESS",
+	START_SERVICE: "START_SERVICE",
+	STOP_SERVICE:  "STOP_SERVICE",
 	CREATE_FILE:   "CREATE_FILE",
 	USE_RAM:       "USE_RAM",
 	USE_CPU:       "USE_CPU",
@@ -65,11 +69,13 @@ var taskTypesId = map[TaskType]string{
 	SHUTDOWN:      "SHUTDOWN",
 	ADD_LATENCY:   "ADD_LATENCY",
 	CHANGE_TIME:   "CHANGE_TIME",
+	RUN_COMMAND:   "RUN_COMMAND",
 }
 
 var taskTypesName = map[string]TaskType{
 	"KILL_PROCESS":  KILL_PROCESS,
-	"START_PROCESS": START_PROCESS,
+	"START_SERVICE": START_SERVICE,
+	"STOP_SERVICE":  STOP_SERVICE,
 	"CREATE_FILE":   CREATE_FILE,
 	"USE_RAM":       USE_RAM,
 	"USE_CPU":       USE_CPU,
@@ -77,6 +83,7 @@ var taskTypesName = map[string]TaskType{
 	"SHUTDOWN":      SHUTDOWN,
 	"ADD_LATENCY":   ADD_LATENCY,
 	"CHANGE_TIME":   CHANGE_TIME,
+	"RUN_COMMAND":   RUN_COMMAND,
 }
 
 func (d *TaskType) MarshalJSON() ([]byte, error) {
