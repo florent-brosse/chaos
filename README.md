@@ -30,17 +30,30 @@ Chaos is tested against multiple versions of Go on Linux
 
 It can launch some actions
 ```
+Create a process which use ram
 chaos --ram --ramusage 80%
 chaos --ram --ramusage 5000000000
-chaos --cpu --cpuusage 80%
-chaos --file --fileusage 1% --filepath /tmp/BIGFILE
-chaos --file --fileusage 10000000 --filepath /tmp/BIGFILE 
 ```
+```
+Create a process which use 80% of every core
+chaos --cpu --cpuusage 80%
+```
+
+```
+Create a big file in the /tmp filesystem
+chaos --file --fileusage 1% --filepath /tmp/BIGFILE
+chaos --file --fileusage 10000000 --filepath /tmp/BIGFILE
+```
+```
+Create 10MB/s io usage in the /tmp filesystem
+chaos --io --iousage 10 --iopath /tmp/file
+```
+
 ```
 or run the server
-./chaos
+chaos
 
-and post a scenarios
+and post a scenario
 curl -X POST \
   http://localhost:7070/scenarios/1 \
   -H 'Cache-Control: no-cache' \

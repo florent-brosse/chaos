@@ -26,6 +26,7 @@ type config struct {
 	Fileusage      string
 	Io             bool
 	Iousage        string
+	Iopath         string
 }
 
 var (
@@ -44,10 +45,11 @@ func getConf() *config {
 
 	flag.Bool("io", false, "launch io task")
 	flag.String("iousage", "50", "io task usage")
+	flag.String("iopath", "50", "io task path")
 
 	flag.Bool("file", false, "create file task")
 	flag.String("fileusage", "50", "file task usage")
-	flag.String("filepath", "/tmp/BIG_FILE", "file task usage")
+	flag.String("filepath", "/tmp/BIG_FILE", "file task path")
 
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
@@ -83,7 +85,7 @@ func main() {
 		case conf.Ram:
 			ram(conf.Ramusage)
 		case conf.Io:
-			io(conf.Iousage)
+			io(conf.Iousage, conf.Iopath)
 		case conf.File:
 			makeFile(conf.Filepath, conf.Fileusage)
 		default:
@@ -148,7 +150,7 @@ func launchTask(task *Task) {
 	case USE_CPU:
 		command = "./chaos --cpu --cpuusage " + task.Param["usage"]
 	case USE_IO:
-		command = "./chaos --io --iousage " + task.Param["usage"]
+		command = "./chaos --io --iopath " + task.Param["path"] + " --iousage " + task.Param["usage"]
 	case KILL_PROCESS:
 		command = "killall " + task.Param["processname"]
 	case SHUTDOWN:
