@@ -123,10 +123,12 @@ func doScenario(scenario *Scenario) {
 		durationSec := time.Second * time.Duration(task.Duration)
 		endDate := task.Start.Add(durationSec)
 		if !task.Done && !task.Launched && task.Start.Before(timeNow) && (endDate).After(timeNow) {
-			go launchTask(task)
+			task.Launched = true
+			launchTask(task)
 		}
 		if !task.Done && task.Launched && (endDate).Before(timeNow) {
-			go stopTask(task)
+			task.Done = true
+			stopTask(task)
 		}
 		if !task.Done && !task.Launched && (endDate).Before(timeNow) {
 			task.Launched = false
@@ -138,7 +140,6 @@ func doScenario(scenario *Scenario) {
 }
 
 func launchTask(task *Task) {
-	task.Launched = true
 	var command string
 	switch task.Type {
 	case STOP_SERVICE:
@@ -169,7 +170,6 @@ func launchTask(task *Task) {
 	task.pid = launchCommand(command)
 }
 func stopTask(task *Task) {
-	task.Done = true
 	var command string
 	switch task.Type {
 	case CREATE_FILE:
@@ -181,7 +181,7 @@ func stopTask(task *Task) {
 	case BLOCK_RANGE_INPUT_PORT:
 		command = "/sbin/iptables -D INPUT -p tcp --destination-port " + task.Param["rangeport"] + " -j DROP"
 	default:
-		command = "pkill -9 -P " + strconv.Itoa(task.pid)
+		command = "kill " + strconv.Itoa(task.pid) + ";pkill -P " + strconv.Itoa(task.pid)
 	}
 	if command != "" {
 		launchCommand(command)
