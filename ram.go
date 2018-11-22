@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
+
+	"github.com/shirou/gopsutil/mem"
 )
 
 var overall [][]int
@@ -16,15 +17,13 @@ func ram(usageString string) {
 	if strings.HasSuffix(usageString, "%") {
 		usageString = strings.TrimSuffix(usageString, "%")
 		percent, _ := strconv.ParseUint(usageString, 10, 64)
-		si := &syscall.Sysinfo_t{}
-
-		err := syscall.Sysinfo(si)
+		vm, err := mem.VirtualMemory()
 		if err != nil {
-			panic("Commander, we have a problem. syscall.Sysinfo:" + err.Error())
+			panic("Commander, we have a problem. mem.VirtualMemory:" + err.Error())
 		}
-		//fmt.Println(si.Freeram)
-		//fmt.Println(si.Bufferram)
-		size = (si.Freeram + si.Bufferram) * percent / 100
+		// fmt.Println(vm)
+		size = vm.Available
+		size = size * percent / 100
 	} else {
 		size, _ = strconv.ParseUint(usageString, 10, 64)
 		size *= 1000000 //change from MB to B

@@ -6,11 +6,11 @@ Chaos is a tool to create chaos in your server.
 
 ## Overview
 
-Chaos is an agent tool to create chaos in your local machine. It's manageg by another project chaos-manager.
+Chaos is an agent tool to create chaos in your local machine. It's managed by another project chaos-manager.
 
 ## Installation
 
-Make sure you have a working Go environment.  Go version 1.2+ is supported.  [See
+Make sure you have a working Go environment.  Go version 1.7+ is supported.  [See
 the install instructions for Go](http://golang.org/doc/install.html).
 
 To install cli, simply run:
